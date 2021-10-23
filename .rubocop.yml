@@ -16,6 +16,7 @@ Metrics/BlockLength:
   Enabled: true
   Max: 60
   Exclude:
+    - 'spec/**/*'
     - 'app/admin/*'
 
 Metrics/AbcSize:
