@@ -25,10 +25,10 @@ describe ItemsController, type: :request do
   end
 
   describe 'PUT /api/items/:id' do
-    subject(:update_item_request) { api_put "/api/items/#{item_id}", {price: new_price} }
+    subject(:update_item_request) { api_put "/api/items/#{item_gid}", {price: new_price} }
 
     let(:item) { create(:item, :mug) }
-    let(:item_id) { item.id }
+    let(:item_gid) { item.gid }
     let(:new_price) { 99 }
 
     context 'with valid price and item id' do
@@ -70,8 +70,8 @@ describe ItemsController, type: :request do
       end
     end
 
-    context 'with invalid item id' do
-      let(:item_id) { '100500' }
+    context 'with invalid item gid' do
+      let(:item_gid) { '100500' }
 
       it 'returns error response code' do
         update_item_request
@@ -80,7 +80,7 @@ describe ItemsController, type: :request do
 
       it 'returns error message' do
         update_item_request
-        expect(json_response).to include('errors' => ["Couldn't find Item with 'id'=100500"])
+        expect(json_response).to include('errors' => ["Couldn't find Item"])
       end
     end
   end

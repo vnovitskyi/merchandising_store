@@ -1,5 +1,5 @@
 class UpdateItem < BaseInteractor
-  delegate :id, :price, to: :input
+  delegate :gid, :price, to: :input
   delegate :data, to: :output
 
   def call
@@ -14,6 +14,6 @@ class UpdateItem < BaseInteractor
   end
 
   def item
-    Item.find(id)
+    Item.find_by!(gid: gid)
   end
 end

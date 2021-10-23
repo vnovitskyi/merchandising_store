@@ -1,11 +1,11 @@
 describe UpdateItem do
-  subject(:update_item) { described_class.(id: id, price: price) }
+  subject(:update_item) { described_class.(gid: gid, price: price) }
 
   let(:item) { create(:item, :mug) }
-  let(:id) { item.id }
+  let(:gid) { item.gid }
   let(:price) { 100 }
 
-  context 'with valid price and item id' do
+  context 'with valid price and item gid' do
     let(:expected_data) do
       {'code' => 'MUG', 'name' => 'Reedsy Mug', 'price' => 100, 'gid' => '883a9cdc-a6ad-40b7-a68b-8f029a21d2e8'}
     end
@@ -19,11 +19,11 @@ describe UpdateItem do
     end
   end
 
-  context 'with invalid item id' do
-    let(:id) { '100500' }
+  context 'with invalid item gid' do
+    let(:gid) { '100500' }
 
     it 'raises error' do
-      expect { update_item }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find Item with 'id'=100500")
+      expect { update_item }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find Item")
     end
   end
 
