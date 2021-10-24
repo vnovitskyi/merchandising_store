@@ -9,4 +9,6 @@ class Discount < ApplicationRecord
 
   validates :type, presence: true, inclusion: {in: DISCOUNT_TYPES}
   validates :purchase_item_quantity, numericality: {greater_than: 0}, allow_nil: true
+
+  scope :applicable_for_items, ->(items) { joins(:item_discounts).where(item_discounts: {item: items}) }
 end
