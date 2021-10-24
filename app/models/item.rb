@@ -1,6 +1,10 @@
 class Item < ApplicationRecord
   CODES = %w[MUG TSHIRT HOODIE].freeze
+
   include SignificantAttributes
+
+  has_many :item_discounts
+  has_many :discounts, through: :item_discounts
 
   validates :code, presence: true, uniqueness: true, inclusion: {in: CODES}
   validates :name, presence: true

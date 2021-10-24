@@ -22,6 +22,6 @@ class ItemsController < APIController
   end
 
   def items_price
-    ItemsPrice.(codes: params[:codes])
+    ItemsPrice.(gids: params[:items_gids])
   end
 end

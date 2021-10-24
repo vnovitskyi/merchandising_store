@@ -10,10 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_23_072237) do
+ActiveRecord::Schema.define(version: 2021_10_24_080918) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "discounts", force: :cascade do |t|
+    t.string "type", null: false
+    t.integer "purchase_item_quantity"
+    t.integer "free_item_quantity"
+    t.integer "percent_discount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "item_discounts", force: :cascade do |t|
+    t.bigint "item_id"
+    t.bigint "discount_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discount_id"], name: "index_item_discounts_on_discount_id"
+    t.index ["item_id"], name: "index_item_discounts_on_item_id"
+  end
 
   create_table "items", force: :cascade do |t|
     t.string "code", null: false
