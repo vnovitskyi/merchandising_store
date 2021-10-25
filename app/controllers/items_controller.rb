@@ -7,6 +7,10 @@ class ItemsController < APIController
     render_context(update_item)
   end
 
+  def price
+    render_context(items_price)
+  end
+
   private
 
   def list_items
@@ -14,6 +18,10 @@ class ItemsController < APIController
   end
 
   def update_item
-    UpdateItem.(id: params[:id], price: params[:price])
+    UpdateItem.(gid: params[:id], price: params[:price])
+  end
+
+  def items_price
+    ItemsPrice.(gids: params[:items_gids])
   end
 end

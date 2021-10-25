@@ -1,10 +1,5 @@
 FactoryBot.define do
   factory :item do
-    code { 'TSHIRT' }
-    name { 'Reedsy T-shirt ' }
-    price { 15 }
-    gid { 'f492a901-9946-4816-a17b-17a01df0c99e' }
-
     trait :mug do
       code { 'MUG' }
       name { 'Reedsy Mug' }
@@ -17,6 +12,13 @@ FactoryBot.define do
       name { 'Reedsy Hoodie ' }
       price { 20 }
       gid { 'ed995ee2-9e35-46a7-8e6d-f12cfbf246c5' }
+    end
+
+    trait :t_shirt do
+      code { 'TSHIRT' }
+      name { 'Reedsy T-shirt ' }
+      price { 15 }
+      gid { 'f492a901-9946-4816-a17b-17a01df0c99e' }
     end
   end
 end

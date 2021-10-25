@@ -25,10 +25,10 @@ describe ItemsController, type: :request do
   end
 
   describe 'PUT /api/items/:id' do
-    subject(:update_item_request) { api_put "/api/items/#{item_id}", {price: new_price} }
+    subject(:update_item_request) { api_put "/api/items/#{item_gid}", {price: new_price} }
 
     let(:item) { create(:item, :mug) }
-    let(:item_id) { item.id }
+    let(:item_gid) { item.gid }
     let(:new_price) { 99 }
 
     context 'with valid price and item id' do
@@ -70,8 +70,8 @@ describe ItemsController, type: :request do
       end
     end
 
-    context 'with invalid item id' do
-      let(:item_id) { '100500' }
+    context 'with invalid item gid' do
+      let(:item_gid) { '100500' }
 
       it 'returns error response code' do
         update_item_request
@@ -80,7 +80,99 @@ describe ItemsController, type: :request do
 
       it 'returns error message' do
         update_item_request
-        expect(json_response).to include('errors' => ["Couldn't find Item with 'id'=100500"])
+        expect(json_response).to include('errors' => ["Couldn't find Item"])
+      end
+    end
+  end
+
+  describe 'GET /api/price/' do
+    let(:mug) { create(:item, :mug) }
+    let(:t_shirt) { create(:item, :t_shirt) }
+    let(:hoodie) { create(:item, :hoodie) }
+    let(:free_item_discount) { create(:free_item_discount) }
+    let(:percentage_discount) { create(:percentage_discount) }
+
+    before do
+      create(:item_discount, discount: free_item_discount, item: mug)
+      create(:item_discount, discount: percentage_discount, item: t_shirt)
+      api_get '/api/items/price/', {items_gids: items_gids}
+    end
+
+    context 'when not applying discounts' do
+      let(:items_gids) { [mug.gid, t_shirt.gid, hoodie.gid] }
+      let(:expected_response) do
+        {
+          'data' => {'discount' => 0, 'total' => '41.0', 'normal_price' => '41.0'}
+        }
+      end
+
+      it 'returns price for requested items' do
+        expect(json_response).to include(expected_response)
+      end
+    end
+
+    context 'when 2 for 1 discount' do
+      let(:items_gids) { [mug.gid, t_shirt.gid, mug.gid] }
+      let(:expected_response) do
+        {
+          'data' => {'discount' => '6.0', 'total' => '21.0', 'normal_price' => '27.0'}
+        }
+      end
+
+      it 'returns price for requested items' do
+        expect(json_response).to include(expected_response)
+      end
+
+      context 'when purchase 3 same items' do
+        let(:items_gids) { [mug.gid, t_shirt.gid, mug.gid, mug.gid] }
+
+        let(:expected_response) do
+          {
+            'data' => {'discount' => '6.0', 'total' => '27.0', 'normal_price' => '33.0'}
+          }
+        end
+
+        it 'returns price for requested items' do
+          expect(json_response).to include(expected_response)
+        end
+      end
+    end
+
+    context 'when percent discount for 3 or more' do
+      let(:items_gids) { [t_shirt.gid, t_shirt.gid, t_shirt.gid] }
+      let(:expected_response) do
+        {
+          'data' => {'discount' => '13.5', 'total' => '31.5', 'normal_price' => '45.0'}
+        }
+      end
+
+      it 'returns price for requested items' do
+        expect(json_response).to include(expected_response)
+      end
+    end
+
+    context 'when percent discount for 3 or more items and 2 for 1 discount' do
+      let(:items_gids) { [mug.gid, t_shirt.gid, t_shirt.gid, t_shirt.gid, t_shirt.gid, mug.gid, hoodie.gid] }
+      let(:expected_response) do
+        {
+          'data' => {'discount' => '24.0', 'normal_price' => '92.0', 'total' => '68.0'}
+        }
+      end
+
+      it 'returns price for requested items' do
+        expect(json_response).to include(expected_response)
+      end
+    end
+
+    context 'with invalid gids' do
+      let(:items_gids) { ['100500'] }
+
+      it 'returns error response code' do
+        expect(response.code).to eq('404')
+      end
+
+      it 'returns error message' do
+        expect(json_response).to include('errors' => ["Couldn't find Item"])
       end
     end
   end
